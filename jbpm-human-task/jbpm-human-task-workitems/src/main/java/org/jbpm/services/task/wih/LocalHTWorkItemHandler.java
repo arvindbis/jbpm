@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jbpm.services.task.exception.PermissionDeniedException;
+import org.jbpm.services.task.prediction.PredictionServiceRegistry;
 import org.jbpm.services.task.utils.OnErrorAction;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
@@ -31,6 +32,8 @@ import org.kie.api.task.model.OrganizationalEntity;
 import org.kie.api.task.model.Task;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.kie.internal.task.api.InternalTaskService;
+import org.kie.internal.task.api.prediction.PredictionOutcome;
+import org.kie.internal.task.api.prediction.PredictionService;
 import org.kie.internal.task.exception.TaskException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +42,9 @@ import org.slf4j.LoggerFactory;
 public class LocalHTWorkItemHandler extends AbstractHTWorkItemHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalHTWorkItemHandler.class);
-    private RuntimeManager runtimeManager;        
+    private RuntimeManager runtimeManager; 
+    
+    private PredictionService predictionService = PredictionServiceRegistry.get().getService();
     
     public RuntimeManager getRuntimeManager() {
         return runtimeManager;
@@ -59,16 +64,26 @@ public class LocalHTWorkItemHandler extends AbstractHTWorkItemHandler {
         KieSession ksessionById = runtime.getKieSession();
         
         Task task = createTaskBasedOnWorkItemParams(ksessionById, workItem);
-//        ContentData content = createTaskContentBasedOnWorkItemParams(ksessionById, workItem);
         Map<String, Object> content = createTaskDataBasedOnWorkItemParams(ksessionById, workItem);
         try {
-            long taskId = ((InternalTaskService) runtime.getTaskService()).addTask(task, content);
-            if (isAutoClaim(ksessionById, workItem, task)) {
-            	try {
-            		runtime.getTaskService().claim(taskId, (String) workItem.getParameter("SwimlaneActorId"));
-            	} catch (PermissionDeniedException e) {
-            		logger.warn("User {} is not allowed to auto claim task due to permission violation", workItem.getParameter("SwimlaneActorId"));
-            	}
+            
+            PredictionOutcome outcome = predictionService.predict(task, content);
+            
+            if (outcome.isCertain()) {
+                logger.debug("Prediction service returned certain outcome (confidence level {}) for task {}, completing directly",
+                        outcome.getConfidenceLevel(), task);
+                
+                manager.completeWorkItem(workItem.getId(), outcome.getData());
+            } else if (outcome.isPresent()) {
+                logger.debug("Prediction service returned uncertain outcome (confidence level {}) for task {}, setting suggested data",
+                        outcome.getConfidenceLevel(), task);
+                
+                long taskId = createTaskInstance((InternalTaskService) runtime.getTaskService(), task, workItem, ksessionById, content);
+                ((InternalTaskService) runtime.getTaskService()).setOutput(taskId, ADMIN_USER, outcome.getData());
+            } else {
+                logger.debug("Not outcome present from prediction service, creating user task");
+                createTaskInstance((InternalTaskService) runtime.getTaskService(), task, workItem, ksessionById, content);
+                
             }
         } catch (Exception e) {
             if (action.equals(OnErrorAction.ABORT)) {
@@ -122,6 +137,19 @@ public class LocalHTWorkItemHandler extends AbstractHTWorkItemHandler {
             }
         }
         
+    }
+    
+    protected long createTaskInstance(InternalTaskService taskService, Task task, WorkItem workItem, KieSession session, Map<String, Object> content) {
+        long taskId = taskService.addTask(task, content);
+        if (isAutoClaim(session, workItem, task)) {
+            try {
+                taskService.claim(taskId, (String) workItem.getParameter("SwimlaneActorId"));
+            } catch (PermissionDeniedException e) {
+                logger.warn("User {} is not allowed to auto claim task due to permission violation", workItem.getParameter("SwimlaneActorId"));
+            }
+        }
+        
+        return taskId;
     }
     
 }

@@ -18,6 +18,7 @@ package org.jbpm.services.task.wih;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jbpm.services.task.prediction.PredictionServiceRegistry;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
@@ -27,6 +28,7 @@ import org.kie.api.task.model.Status;
 import org.kie.api.task.model.Task;
 import org.kie.internal.runtime.manager.RuntimeManagerRegistry;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
+import org.kie.internal.task.api.prediction.PredictionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,8 @@ public class ExternalTaskEventListener implements TaskLifeCycleEventListener {
 
     private RuntimeManagerRegistry registry = RuntimeManagerRegistry.get();
     private static final Logger logger = LoggerFactory.getLogger(ExternalTaskEventListener.class);
+    
+    private PredictionService predictionService = PredictionServiceRegistry.get().getService();
  
     public ExternalTaskEventListener() {
     }
@@ -58,6 +62,8 @@ public class ExternalTaskEventListener implements TaskLifeCycleEventListener {
             }
 
         	results.put("ActorId", userId);
+        	
+        	predictionService.train(task, task.getTaskData().getTaskInputVariables(), results);
             session.getWorkItemManager().completeWorkItem(workItemId, results);
             
         } else {
@@ -96,18 +102,8 @@ public class ExternalTaskEventListener implements TaskLifeCycleEventListener {
         if (processInstanceId <= 0) {
             return;
         }
-        RuntimeManager manager = getManager(task);
-        if (manager == null) {
-            throw new RuntimeException("No RuntimeManager registered with identifier: " + task.getTaskData().getDeploymentId());
-        }
-        RuntimeEngine runtime = manager.getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
-        KieSession session = runtime.getKieSession();
-        if (session != null) {
-            logger.debug(">> I've recieved an event for a known session (" + task.getTaskData().getProcessSessionId()+")");
-            processTaskState(task);
-        } else {
-            logger.error("EE: I've recieved an event but the session is not known by this handler ( "+task.getTaskData().getProcessSessionId()+")");
-        }
+        processTaskState(task);
+        
     }
 
     public void afterTaskFailedEvent(TaskEvent event) {
