@@ -1,0 +1,27 @@
+@relation approval
+
+@attribute item {apple, lenovo}
+@attribute requestor {john, mary}
+@attribute approved {true, false}
+
+@data
+apple,john,false
+apple,mary,true
+lenovo,john,false
+lenovo,mary,true
+apple,john,false
+apple,mary,true
+lenovo,john,false
+lenovo,mary,true
+apple,john,false
+apple,mary,true
+lenovo,john,false
+lenovo,mary,true
+apple,john,false
+apple,mary,true
+lenovo,john,false
+lenovo,mary,true
+apple,john,false
+apple,mary,true
+lenovo,john,false
+lenovo,mary,true

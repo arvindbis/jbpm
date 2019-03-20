@@ -11,6 +11,7 @@
 
   <logger name="com.arjuna" level="error"/>
   <logger name="org.hibernate" level="warn"/>
+  <logger name="smile" level="warn"/>
   <logger name="org.hibernate.tool.hbm2ddl.SchemaExport" level="off"/>
   
   <logger name="org.jbpm.services.task.wih" level="warn"/>

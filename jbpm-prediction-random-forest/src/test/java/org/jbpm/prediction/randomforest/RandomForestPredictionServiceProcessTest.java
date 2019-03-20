@@ -16,6 +16,17 @@
 
 package org.jbpm.prediction.randomforest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.jbpm.services.api.model.DeploymentUnit;
 import org.jbpm.test.services.AbstractKieServicesTest;
 import org.junit.After;
@@ -25,10 +36,11 @@ import org.junit.Test;
 import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.query.QueryFilter;
 
-import java.util.*;
-import java.util.logging.Logger;
-
-import static org.junit.Assert.*;
+import smile.classification.RandomForest;
+import smile.data.AttributeDataset;
+import smile.data.parser.ArffParser;
+import smile.math.Math;
+import smile.validation.LOOCV;
 
 public class RandomForestPredictionServiceProcessTest extends AbstractKieServicesTest {
 
@@ -209,16 +221,18 @@ public class RandomForestPredictionServiceProcessTest extends AbstractKieService
     public void testManagerApproval1() {
     	// TODO why do I need one input to start, different from the others, that seem to be ignored? otherwise I get exception
     	startAndReturnTaskOutputData("apple", "john", 5, true);
-    	for (int i = 0 ; i < 1000; i++) {
+    	for (int i = 0 ; i < 10; i++) {
     		System.out.print("[" + i + "] ");
     		startAndReturnTaskOutputData("apple", "john", 5, false);
+    		startAndReturnTaskOutputData("lenovo", "john", 5, false);
     		startAndReturnTaskOutputData("apple", "mary", 5, true);
+    		startAndReturnTaskOutputData("lenovo", "mary", 5, true);
         }
 //		startAndReturnTaskOutputData("test item2", "krisv", 10, true);
 //		startAndReturnTaskOutputData("test item2", "krisv", 10, false);
 //		startAndReturnTaskOutputData("test item2", "krisv", 10, false);
     }
-    
+
     /*
      * Helper methods
      */
