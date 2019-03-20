@@ -50,7 +50,7 @@
       <bpmn2:dataInputAssociation id="_ZXxk5PPIEei3vdSeFAookw">
         <bpmn2:targetRef>_7D6B6D7B-4382-4FD3-A856-B947D0ACD89B_TaskNameInputX</bpmn2:targetRef>
         <bpmn2:assignment id="_ZXxk5fPIEei3vdSeFAookw">
-          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_ZXxk5vPIEei3vdSeFAookw"><![CDATA[Task]]></bpmn2:from>
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_ZXxk5vPIEei3vdSeFAookw"><![CDATA[ManagerApproval]]></bpmn2:from>
           <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_ZXyL8PPIEei3vdSeFAookw">_7D6B6D7B-4382-4FD3-A856-B947D0ACD89B_TaskNameInputX</bpmn2:to>
         </bpmn2:assignment>
       </bpmn2:dataInputAssociation>

@@ -54,7 +54,7 @@ public class RandomForestPredictionServiceProcessTest extends AbstractKieService
     @Override
     protected List<String> getProcessDefinitionFiles() {
         List<String> processes = new ArrayList<String>();
-        processes.add("BPMN2-UserTask.bpmn2");
+        processes.add("BPMN2-ManagerApprovalTask.bpmn2");
         return processes;
     }
 
@@ -201,6 +201,22 @@ public class RandomForestPredictionServiceProcessTest extends AbstractKieService
 		startAndReturnTaskOutputData("test item2", "krisv", 10, true);
 		startAndReturnTaskOutputData("test item2", "krisv", 10, false);
 		startAndReturnTaskOutputData("test item2", "krisv", 10, false);
+    }
+    
+    // shows how after passing min count of 2 input with 1 irrelevant param switching between 5 possible values,
+    // accuracy of completely new input is extremely high, why?
+    @Test
+    public void testManagerApproval1() {
+    	// TODO why do I need one input to start, different from the others, that seem to be ignored? otherwise I get exception
+    	startAndReturnTaskOutputData("apple", "john", 5, true);
+    	for (int i = 0 ; i < 1000; i++) {
+    		System.out.print("[" + i + "] ");
+    		startAndReturnTaskOutputData("apple", "john", 5, false);
+    		startAndReturnTaskOutputData("apple", "mary", 5, true);
+        }
+//		startAndReturnTaskOutputData("test item2", "krisv", 10, true);
+//		startAndReturnTaskOutputData("test item2", "krisv", 10, false);
+//		startAndReturnTaskOutputData("test item2", "krisv", 10, false);
     }
     
     /*
