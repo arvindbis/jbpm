@@ -469,7 +469,7 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
                             replacements.put(paramName, variableValueString);
                         } catch (Throwable t) {
     
-                            logger.error("Continuing without setting parameter.");
+                            logger.error("Continuing without setting parameter " + s, t);
                         }
                     }
                     

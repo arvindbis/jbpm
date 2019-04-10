@@ -70,9 +70,13 @@ public class RandomForestPredictionService implements PredictionService {
             return new PredictionOutcome();
         } else {
             try {
-            	String itemInput = (String) inputData.get("item");
+            	String itemInput = (String) inputData.get("supplier");
 	        	if (itemInput == null) {
-	        		itemInput = "apple";
+	        		if (count % 2 == 0) {
+	        			itemInput = "lenovo";
+	        		} else {
+	        			itemInput = "apple";
+	        		}
 	        	}
 	        	String requestor = (String) inputData.get("requestor");
 	        	if (requestor == null) {
@@ -87,8 +91,13 @@ public class RandomForestPredictionService implements PredictionService {
                 double accuracy = accuracy(randomForest.error());
                 outcomes.put("approved", Boolean.valueOf(approved.toString(prediction)));
                 outcomes.put("confidence", accuracy);
-                System.out.print("Predict Input: userName = " + requestor + ", item = " + itemInput);
-                System.out.println("; predicting '" + outcomes.get("approved") + "' with accuracy " + accuracy + "%");
+                double[] importance = randomForest.importance();
+                outcomes.put("requestorImportance", importance[0]);
+                outcomes.put("itemImportance", importance[1]);
+//                System.out.print("Predict Input: userName = " + requestor + ", item = " + itemInput);
+//                System.out.println("; predicting '" + outcomes.get("approved") + "' with accuracy " + accuracy + "% " + importance[0] + " " + importance[1]);
+                System.out.println(requestor+ "\t" + itemInput + "\t" + outcomes.get("approved") + "\t" + accuracy + "\t" + importance[0] + "\t" + importance[1]);
+//                System.out.println(randomForest.getTrees()[0].dot());
                 return new PredictionOutcome(accuracy, confidenceThreshold, count, MIN_COUNT, outcomes);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -101,9 +110,13 @@ public class RandomForestPredictionService implements PredictionService {
         if ("ManagerApproval".equals(task.getFormName())) {
     		count++;
 	        try {
-	        	String itemInput = (String) inputData.get("item");
+	        	String itemInput = (String) inputData.get("supplier");
 	        	if (itemInput == null) {
-	        		itemInput = "apple";
+	        		if (count % 2 == 0) {
+	        			itemInput = "lenovo";
+	        		} else {
+	        			itemInput = "apple";
+	        		}
 	        	}
 	        	String requestor = (String) inputData.get("requestor");
 	        	if (requestor == null) {

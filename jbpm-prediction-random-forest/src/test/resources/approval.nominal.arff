@@ -1,27 +1,27 @@
 @relation approval
 
 @attribute item {apple, lenovo}
-@attribute requestor {john, mary}
+@attribute requestor {maciek, mary}
 @attribute approved {true, false}
 
 @data
-apple,john,false
-apple,mary,true
-lenovo,john,false
-lenovo,mary,true
-apple,john,false
-apple,mary,true
-lenovo,john,false
-lenovo,mary,true
-apple,john,false
-apple,mary,true
-lenovo,john,false
-lenovo,mary,true
-apple,john,false
-apple,mary,true
-lenovo,john,false
-lenovo,mary,true
-apple,john,false
-apple,mary,true
-lenovo,john,false
-lenovo,mary,true
+apple,maciek,true
+lenovo,maciek,true
+apple,mary,false
+lenovo,mary,false
+apple,maciek,true
+lenovo,maciek,true
+apple,mary,false
+lenovo,mary,false
+apple,maciek,true
+lenovo,maciek,true
+apple,mary,false
+lenovo,mary,false
+apple,maciek,true
+lenovo,maciek,true
+apple,mary,false
+lenovo,mary,false
+apple,maciek,true
+lenovo,maciek,true
+apple,mary,false
+lenovo,mary,false

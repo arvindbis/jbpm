@@ -219,18 +219,37 @@ public class RandomForestPredictionServiceProcessTest extends AbstractKieService
     // accuracy of completely new input is extremely high, why?
     @Test
     public void testManagerApproval1() {
-    	// TODO why do I need one input to start, different from the others, that seem to be ignored? otherwise I get exception
-    	startAndReturnTaskOutputData("apple", "john", 5, true);
+    	startAndReturnTaskOutputData("apple", "john", 5, false);
     	for (int i = 0 ; i < 10; i++) {
-    		System.out.print("[" + i + "] ");
+    		startAndReturnTaskOutputData("apple", "john", 5, true);
+    		startAndReturnTaskOutputData("lenovo", "john", 5, true);
+    		startAndReturnTaskOutputData("apple", "mary", 5, false);
+    		startAndReturnTaskOutputData("lenovo", "mary", 5, false);
+        }
+    }
+
+    @Test
+    public void testManagerApprovalWithOutlier1() {
+    	startAndReturnTaskOutputData("apple", "john", 5, false);
+    	for (int i = 0 ; i < 5; i++) {
+    		startAndReturnTaskOutputData("apple", "john", 5, true);
+    		startAndReturnTaskOutputData("lenovo", "john", 5, true);
+    		startAndReturnTaskOutputData("apple", "mary", 5, false);
+    		startAndReturnTaskOutputData("lenovo", "mary", 5, false);
+        }
+    	for (int i = 0 ; i < 1; i++) {
     		startAndReturnTaskOutputData("apple", "john", 5, false);
     		startAndReturnTaskOutputData("lenovo", "john", 5, false);
     		startAndReturnTaskOutputData("apple", "mary", 5, true);
     		startAndReturnTaskOutputData("lenovo", "mary", 5, true);
+    	}
+    	for (int i = 0 ; i < 5; i++) {
+//    		System.out.print("[" + i + "] ");
+    		startAndReturnTaskOutputData("apple", "john", 5, true);
+    		startAndReturnTaskOutputData("lenovo", "john", 5, true);
+    		startAndReturnTaskOutputData("apple", "mary", 5, false);
+    		startAndReturnTaskOutputData("lenovo", "mary", 5, false);
         }
-//		startAndReturnTaskOutputData("test item2", "krisv", 10, true);
-//		startAndReturnTaskOutputData("test item2", "krisv", 10, false);
-//		startAndReturnTaskOutputData("test item2", "krisv", 10, false);
     }
 
     /*

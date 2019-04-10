@@ -47,7 +47,7 @@ import smile.validation.LOOCV;
 public class RandomForestTest {
 
     @Test
-    public void testSmile() {
+    public void testSmileApproval() {
         ArffParser arffParser = new ArffParser();
         arffParser.setResponseIndex(2);
         try {
@@ -65,17 +65,66 @@ public class RandomForestTest {
                 int[] trainy = Math.slice(y, loocv.train[i]);
                 
                 RandomForest forest = new RandomForest(approval.attributes(), trainx, trainy, 100);
-               //System.out.println("Error = " + forest.error());
+                System.out.println("Error = " + forest.error());
                 int prediction = forest.predict(x[loocv.test[i]]);
                 if (y[loocv.test[i]] != prediction) {
                     error++;
-                	System.out.println("Incorrectly predicted " + Arrays.toString(x[loocv.test[i]]));
+//                	System.out.println("Incorrectly predicted " + Arrays.toString(x[loocv.test[i]]));
                 } else {
-                	System.out.println("Correctly predicted " + Arrays.toString(x[loocv.test[i]]));
+//                	System.out.println("Correctly predicted " + Arrays.toString(x[loocv.test[i]]));
                 }
             }
             
             System.out.println("Random Forest error = " + error + " out of " + n);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testSmileRecommendationLegal() {
+    	testSmileRecommendation(4);
+    }
+    
+    @Test
+    public void testSmileRecommendationHR() {
+    	testSmileRecommendation(3);
+    }
+    
+    public void testSmileRecommendation(int responseIndex) {
+        ArffParser arffParser = new ArffParser();
+        arffParser.setResponseIndex(responseIndex);
+        try {
+        	
+            AttributeDataset approval = arffParser.parse(
+        		this.getClass().getClassLoader().getResource("recommendation.nominal.arff").getPath());
+            double[][] x = approval.toArray(new double[approval.size()][]);
+            int[] y = approval.toArray(new int[approval.size()]);
+
+            int n = x.length;
+            LOOCV loocv = new LOOCV(n);
+            int error = 0;
+            RandomForest forest = null;
+            for (int i = 0; i < n; i++) {
+                double[][] trainx = Math.slice(x, loocv.train[i]);
+                int[] trainy = Math.slice(y, loocv.train[i]);
+                
+                forest = new RandomForest(approval.attributes(), trainx, trainy, 100);
+                System.out.println("Error = " + forest.error());
+                int prediction = forest.predict(x[loocv.test[i]]);
+                if (y[loocv.test[i]] != prediction) {
+                    error++;
+                } else {
+                }
+            }
+            
+            System.out.println("Random Forest error = " + error + " out of " + n);
+            System.out.println(forest.getTrees()[0].dot());
+            System.out.println(forest.getTrees()[1].dot());
+            System.out.println(forest.getTrees()[2].dot());
+            System.out.println(forest.getTrees()[3].dot());
+            System.out.println(forest.getTrees()[4].dot());
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail();

@@ -1,0 +1,39 @@
+@relation approval
+
+@attribute item {apple, desk, chair}
+@attribute requestor {john, mary, krisv, geoffrey, maciej, maciek, tihomir, shelly, alex}
+@attribute country {belgium, poland, UK, US}
+@attribute contactHR {false, true}
+@attribute contactLegal {false, true}
+
+@data
+apple,john,US,false,true
+apple,mary,US,false,true
+desk,john,US,false,false
+chair,john,US,false,false
+chair,mary,US,false,false
+apple,krisv,belgium,true,false
+apple,geoffrey,belgium,true,false
+desk,krisv,belgium,false,false
+chair,krisv,belgium,false,false
+apple,tihomir,US,false,true
+desk,tihomir,US,false,false
+chair,tihomir,US,false,false
+apple,maciek,poland,false,true
+desk,maciek,poland,false,false
+chair,krisv,belgium,false,false
+apple,shelly,US,false,true
+apple,mary,US,false,true
+desk,shelly,US,false,false
+chair,shelly,US,false,false
+chair,mary,US,false,false
+apple,krisv,belgium,true,false
+apple,geoffrey,belgium,true,false
+desk,krisv,belgium,false,false
+chair,krisv,belgium,false,false
+apple,alex,US,false,true
+desk,alex,US,false,false
+chair,alex,US,false,false
+apple,maciej,poland,false,true
+desk,maciej,poland,false,false
+chair,krisv,belgium,false,false
